@@ -24,12 +24,12 @@ const svg = d3.select("#chart")
                 .append("g")
                 .attr("transform", `translate(${margin.left}, ${margin.top})`)
 
-d3.csv("WHR_2016.csv", function(d) {
+d3.csv("milestones_imagined.csv", function(d) {
     return {
-        health: +d['Health (Life Expectancy)'],
-        happiness_score: +d["Happiness Score"], 
-        region: d["Region"], 
-        generosity: +d["Generosity"]
+        health: +d['A Week or Less'],
+        happiness_score: +d["1-3 mos"], 
+        region: d["4-6 mos"], 
+        generosity: +d["10-12 mos"]
     }
 }).then(function(data) {
     console.log(data)
