@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+.bar1 { fill: #67597a; }
+.bar2 { fill: #544e61; }
+.bar3 { fill: #6e8894; }
+.bar4 { fill: #85baa1; }
+.bar5 { fill: #ceeddb; }
+.bar6 { fill: #ef959c; }
+.bar7 { fill: #703d57; }
+
+</style>
+
+<header style="font-size:50px; text-align: center;">  Data Story - Margaret Pierce - How Soon is Too Soon? </header>
+<hr size="9" width="90%" color=#85baa1>
+<body>  
+<section style="font-size:20px;">
+	<br> When first beginning to date someone, we've all asked the same questions: when's the right time to become physically intimate? Say "I love you"? Move in together? Get engaged? Answers to these questions will vary widely among cultures and individuals, but one thing is for sure: many of us hold strong opinions on how soon is too soon. In this story, we use data from YouGov's 2021 Relationships study to discover how American adults feel about relationship timelines. Specifically, we explore to what degree people's ideal timelines for common romantic relationship milestones correspond to the decisions they make in their real-life relationships. <br> <br>
+
+	First, YouGov surveyed a group of American adults (N = 1323) on their ideal relationship timelines. In other words, at what point "should" a romantic partnership (not necessarily their own) reach milestones such as meeting the parents or getting engaged? The interactive chart below shows what percentage of respondents believe that each milestone should take place by a certain time (ranging from less than a week to more than 6 years). Click each milestone to view its corresponding data. 
+</section>
+<!-- load the d3.js library -->    	
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+
+// Code is modeled after that found in https://gist.github.com/d3noob/bdf28027e0ce70bd132edc64f1dd7ea4, referenced in the D3 workshop
+// document. 
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+          
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// get the data
+d3.csv("milestones_imagined.csv", function(d) {
+    return {
+        milestone: d["Level"],
+        sex: +d["Sex"],
+        iloveyou: +d["ILY"],
+        family: +d["Meeting Family"],
+        vacation: +d["Vacation"],
+        house: +d["Moving in"],
+        engagement: +d["Engaged"], 
+        marriage: +d["Married"], 
+        pregnancy: +d["Pregnant"], 
+    }
+}).then(function(data) {
+
+  console.log(data);
+
+  const color = d3.scaleOrdinal()
+                  .domain(data.map(d=>d.milestone))
+                  .range(d3.schemeSet3)
+
+  // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.milestone;}));
+  y.domain([0, 50]);
+
+  svg.append("text")
+        .attr("x", 300)
+        .attr("y", 10)
+        .attr("fill", "black")
+        .style("font", "19px sans-serif")
+        .style("font-weight", "bold")
+        .text("Click Each Milestone to Access the Chart");
+
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 20)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar1")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar1")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.sex); })
+      					.attr("height", function(d) { return height - y(d.sex); })})
+        .text("Physical Intimacy");
+
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 45)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar2")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar2")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.iloveyou); })
+      					.attr("height", function(d) { return height - y(d.iloveyou); })})
+        .text("Saying 'I love you'");
+
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 70)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar3")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar3")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.family); })
+      					.attr("height", function(d) { return height - y(d.family); })})
+        .text("Meeting the Family");
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 95)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar4")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar4")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.vacation); })
+      					.attr("height", function(d) { return height - y(d.vacation); })})
+        .text("Going on Vacation");
+
+   svg.append("text")
+        .attr("x", 750)
+        .attr("y", 120)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar5")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar5")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.house); })
+      					.attr("height", function(d) { return height - y(d.house); })})
+        .text("Moving In Together");
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 145)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar6")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar6")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.engagement); })
+      					.attr("height", function(d) { return height - y(d.engagement); })})
+        .text("Engagement");
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 170)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar6")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar6")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.marriage); })
+      					.attr("height", function(d) { return height - y(d.marriage); })})
+        .text("Marriage");
+
+  svg.append("text")
+        .attr("x", 750)
+        .attr("y", 195)
+        .attr("fill", "black")
+        .attr("style", "outline: solid black;") 
+        .style("font", "16px sans-serif")
+        .style("font-weight", "bold")
+        .on("click", function(d) { d3.selectAll('#barchart').remove(); return svg.selectAll(".bar7")
+      					.data(data)
+    					.enter().append("rect")
+      					.attr("class", "bar7")
+      					.attr('id', 'barchart')
+      					.attr("x", function(d) { return x(d.milestone); })
+      					.attr("width", x.bandwidth())
+     					.attr("y", function(d) { return y(d.pregnancy); })
+      					.attr("height", function(d) { return height - y(d.pregnancy); })})
+        .text("Pregnancy");
+
+
+  // add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+});
+</script>
+<section style="font-size:20px;">
+	<br> While opinions on each milestone are strong and varied, we see some clear trends in the data. Most people think physical intimacy should occur earlier in a relationship (by 3 months), while the first couple's vacation should occur by 6 months. Meanwhile, people believe more life-changing milestones such as moving in together or getting engaged should happen after a year or more. Also, quite a few believe that waiting until marriage for certain milestones (such as physical intimacy or pregnancy) is more important than waiting a specific amount of time.  <br> <br>
+
+	But how does this compare to what timelines these same people actually follow in their relationships? Of the participants
+	surveyed, 749 (56%) were in a serious relationship at the time of the study. These participants were asked at what point in 
+	their current relationships they actually reached these milestones (if they had at all).  In many cases, the "real" timelines corresponded fairly well with the "ideal" ones. See the graph below: people's ideal timelines for physical intimacy, meeting each other's families, and moving in together generally corresponded with the real, reported ones. 
+</section>
+</script>
+<!-- The following tables were created in Tableau -->
+<img src="idealvral.PNG">
+<section style="font-size:20px;">
+	<br> As expected from people's reported "ideal" timelines, people generally take steps of physical intimacy and meeting close 
+	friends and family within the first few months of a relationship, while they wait to move in together until a year or mroe has passed. We also observe that the real vs. ideal lines for intimacy and meeting families are closer together than the ones for moving in together. Specifically, we see that couples seem to be actually moving in together later than the "ideal" data would predict. Possibly, since moving in is a much more impactful, important step in a relationship than the other two, couples find that they end up waiting until the relationship has become more solidified.  
+
+	<br> But are there cases in which people's ideal timelines differed significantly from the real ones? Interestingly, we do see some variation within engagement and marriage timelines. For example, in the table below, we see that most people believe that ideally, engagement should occur should occur between years 1 and 6. However, of the participants who had gotten engaged, most had done it before 3 years, with a full 30% having gotten engaged in their first year.  Conversely, if we take a look at the marriage table, we see something else: though most participants believed that ideally, marriage should occur definitely by year 6, a full 10% of participants reported marrying after year 6. 
+</section>
+<img src="marriage.PNG">
+<img src="engagemnt.PNG">
+<section style="font-size:20px;">
+Delving into YouGov's Relationships study illuminates how most U.S. adults approach relationships. It reveals that though we generally move forward with becoming physically intimate, integrating our new partner into our personal lives, and going on trips together within the first few months of a relationship, we wait much longer to consider engagement, marriage, and having children.  And although people's ideal timelines for relationship milestones generally match up with their real-world behavior, this is not always the case: while people generally expect to be engaged and married within 3 years, the actual real-world behavior is far more varied. As relationship timelines have certainly evolved over time (it was not too long ago that the average age of first marriage for women was 20), it will be interesting to watch how perceptions of "How soon is too soon?" changes over time. 
+
+Visualizations created in D3, Google Sheets, and Tableau, respectively. <a href="https://d3nkl3psvxxpe9.cloudfront.net/documents/Copy_of_Results_for_YG_Editorial_Relationships_162_7.14.2021.xlsx__-__Group.pdf">Click to see data source</a>
+</section> 
+</section>
+</body>
